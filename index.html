@@ -6,29 +6,30 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
     <style>
         body{margin:0;background:#000;overflow:hidden;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh}
         canvas{position:absolute;left:0;top:0;width:100vw;height:100vh;object-fit:cover;display:none}
         video{display:none}
         #landing{position:relative;z-index:200;text-align:center;color:#fff;padding:20px;max-width:400px}
-        #landing h1{font-size:35px;margin-bottom:15px;color:#0f0;text-shadow:0 0 10px rgba(0,255,0,0.5)}
+        #app-logo{width:180px;height:180px;margin-bottom:20px;border-radius:50%;border:2px solid #0f0;box-shadow: 0 0 20px rgba(15, 255, 0, 0.4); background: #fff;}
+        #landing h1{font-size:38px;margin:0 0 10px 0;color:#0f0;text-shadow:0 0 10px rgba(0,255,0,0.5)}
         #landing p{font-size:18px;margin-bottom:30px;line-height:1.6;opacity:0.9}
         #startBtn{padding:18px 50px;font-size:22px;border-radius:40px;border:none;background:#0f0;color:#000;font-weight:700;cursor:pointer;box-shadow:0 0 25px rgba(0,255,0,0.4);transition:transform 0.2s}
         #startBtn:active{transform:scale(0.95)}
         #privacy-note{margin-top:20px;font-size:12px;color:#888}
-        #instruction{position:absolute;top:25px;width:90%;text-align:center;color:#fff;font-size:18px;font-weight:700;text-shadow:2px 2px 4px #000;z-index:100;display:none;pointer-events:none;line-height:1.4;background:rgba(0,0,0,0.3);padding:10px;border-radius:15px}
-        #instruction span{font-size:14px;font-weight:400;opacity:0.9}
-        #ui{position:absolute;bottom:30px;width:100%;display:none;flex-wrap:wrap;justify-content:center;gap:12px;z-index:100;padding:10px;box-sizing:border-box}
-        button.tool-btn{padding:12px 20px;border-radius:25px;border:2px solid #0f0;background:rgba(0,0,0,0.8);color:#0f0;font-weight:700;min-width:80px}
+        #instruction{position:absolute;top:25px;width:90%;text-align:center;color:#fff;font-size:16px;font-weight:700;text-shadow:2px 2px 4px #000;z-index:100;display:none;pointer-events:none;line-height:1.4;background:rgba(0,0,0,0.5);padding:12px;border-radius:15px}
+        #instruction span{font-size:13px;font-weight:400;opacity:0.95}
+        #ui{position:absolute;bottom:40px;width:100%;display:none;flex-wrap:wrap;justify-content:center;gap:12px;z-index:100;padding:10px;box-sizing:border-box}
+        button.tool-btn{padding:12px 18px;border-radius:25px;border:2px solid #0f0;background:rgba(0,0,0,0.8);color:#0f0;font-weight:700;min-width:80px}
         button.active{background:#0f0;color:#000}
         #recBtn.recording{border-color:#ff4444;color:#ff4444;animation:blink 1s infinite}@keyframes blink{50%{opacity:.5}}
     </style>
 </head>
 <body>
     <div id="landing">
-        <h1>Face Mirror</h1>
+        <img src="https://i.ibb.co/LzXpYy4/image-d184a2.png" id="app-logo" alt="SymmetryFace Logo">
+        <h1>SymmetryFace</h1>
         <p>גלו את הסימטריה המושלמת של הפנים שלכם.<br>העיבוד מתבצע במכשירכם בלבד.</p>
         <button id="startBtn" onclick="_0xSTART()">התחלת חוויה</button>
         <div id="privacy-note">המצלמה תיפתח רק לאחר האישור. המידע אינו נשמר בשרת.</div>
@@ -113,7 +114,7 @@
 
         function _0xSNAP() {
             const l = document.createElement('a');
-            l.download = 'face-symmetry.png';
+            l.download = 'symmetry-face.png';
             l.href = _0c.toDataURL('image/png');
             l.click();
         }
@@ -129,7 +130,7 @@
                     const bl = new Blob(_0chunks, { type: 'video/webm' });
                     const u = URL.createObjectURL(bl);
                     const a = document.createElement('a');
-                    a.href = u; a.download = 'face-symmetry.webm'; a.click();
+                    a.href = u; a.download = 'symmetry-face.webm'; a.click();
                 };
                 _0r.start();
                 b.classList.add('recording'); b.innerText = '⏹ עצור';
