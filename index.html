@@ -3,163 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>דרך האמצע</title>
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
     <style>
-        :root {
-            --accent: #4ebaba; /* טורקיז רגוע */
-            --bg-glass: rgba(255, 255, 255, 0.1);
-            --text-main: #e0e0e0;
-        }
-        
-        body {
-            margin: 0;
-            background: #0a0c10;
-            overflow: hidden;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: var(--text-main);
-        }
-
-        canvas {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            display: none;
-        }
-
+        :root { --accent: #4ebaba; --bg-glass: rgba(255, 255, 255, 0.1); --text-main: #e0e0e0; }
+        body { margin: 0; background: #0a0c10; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; color: var(--text-main); }
+        canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
         video { display: none; }
-
-        /* מסך נחיתה משופר */
-        #landing {
-            position: relative;
-            z-index: 200;
-            text-align: center;
-            padding: 30px;
-            max-width: 400px;
-            background: rgba(15, 20, 25, 0.8);
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        #app-logo {
-            width: 160px;
-            height: 160px;
-            margin-bottom: 25px;
-            border-radius: 50%;
-            border: 1px solid var(--accent);
-            background: #fff;
-            object-fit: contain;
-            padding: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        h1 {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-
-        p {
-            font-size: 18px;
-            margin-bottom: 35px;
-            opacity: 0.8;
-            font-weight: 300;
-        }
-
-        #startBtn {
-            padding: 16px 45px;
-            border-radius: 30px;
-            background: var(--accent);
-            color: #000;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(78, 186, 186, 0.3);
-        }
-
-        #startBtn:active { transform: scale(0.98); }
-
-        /* ממשק כפתורים נעים */
-        #ui {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            z-index: 100;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        button.tool-btn {
-            padding: 12px 16px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: var(--bg-glass);
-            color: #fff;
-            backdrop-filter: blur(5px);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button.active {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-
-        #slider-container {
-            width: 80%;
-            max-width: 350px;
-            background: var(--bg-glass);
-            padding: 12px 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        input[type=range] {
-            width: 100%;
-            accent-color: var(--accent);
-            margin: 10px 0;
-        }
-
-        /* Watermark עדין */
-        .watermark {
-            position: absolute;
-            bottom: 15px;
-            font-size: 10px;
-            color: rgba(255,255,255,0.3);
-            letter-spacing: 0.5px;
-            pointer-events: none;
-            z-index: 210;
-        }
-
-        #recBtn.recording {
-            border-color: #ff5e5e;
-            color: #ff5e5e;
-            animation: pulse 1.5s infinite;
-        }
+        #landing { position: relative; z-index: 200; text-align: center; padding: 30px; max-width: 400px; background: rgba(15, 20, 25, 0.8); border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        #app-logo { width: 160px; height: 160px; margin-bottom: 25px; border-radius: 50%; border: 1px solid var(--accent); background: #fff; object-fit: contain; padding: 8px; }
+        h1 { font-size: 42px; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
+        p { font-size: 18px; margin-bottom: 35px; opacity: 0.8; font-weight: 300; }
+        #startBtn { padding: 16px 45px; border-radius: 30px; background: var(--accent); color: #000; font-size: 18px; font-weight: 600; border: none; cursor: pointer; }
+        #ui { position: absolute; bottom: 30px; width: 100%; display: none; flex-direction: column; align-items: center; gap: 15px; z-index: 100; }
+        .controls-row { display: flex; gap: 10px; justify-content: center; align-items: center; }
+        button.tool-btn { padding: 12px 16px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); background: var(--bg-glass); color: #fff; backdrop-filter: blur(5px); cursor: pointer; }
+        button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        #slider-container { width: 80%; max-width: 350px; background: var(--bg-glass); padding: 12px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+        input[type=range] { width: 100%; accent-color: var(--accent); }
+        .watermark { position: absolute; bottom: 8px; font-size: 10px; color: rgba(255,255,255,0.25); z-index: 210; width: 100%; text-align: center; pointer-events: none; }
+        #recBtn.recording { border-color: #ff5e5e; color: #ff5e5e; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -167,10 +31,9 @@
 
     <div id="landing">
         <img src="logo.png" id="app-logo" alt="Logo">
-        <h1>SymmetryFace</h1>
+        <h1>דרך האמצע</h1>
         <p>החזר לעצמך את הסימטריה</p>
         <button id="startBtn" onclick="startApp()">התחלת חוויה</button>
-        <div class="watermark" style="position:static; margin-top:20px;">Developed by Dekel Tzidon & Yishay Zvulun</div>
     </div>
 
     <video id="videoElement" playsinline autoplay muted></video>
@@ -195,7 +58,7 @@
         </div>
     </div>
 
-    <div class="watermark" id="app-watermark" style="display:none">Developed by Dekel Tzidon & Yishay Zvulun</div>
+    <div class="watermark">Developed by Dekel Tzidon & Yishay Zvulun</div>
 
     <script>
         const video = document.getElementById('videoElement');
@@ -208,34 +71,23 @@
         let currentMode = 'none', smoothNoseX = 0, selfieSegmentation;
         let isManual = false, showGuide = true, isRecording = false, mediaRecorder, recordedChunks = [];
 
-        function manualAdjust(val) {
-            isManual = true;
-            smoothNoseX = (val / 100) * canvas.width;
-        }
-
+        function manualAdjust(val) { isManual = true; smoothNoseX = (val / 100) * canvas.width; }
         function resetAuto() { isManual = false; }
-        
-        function toggleGuide() { 
-            showGuide = !showGuide; 
-            document.getElementById('btnGuide').classList.toggle('active', !showGuide);
-        }
+        function toggleGuide() { showGuide = !showGuide; document.getElementById('btnGuide').classList.toggle('active', !showGuide); }
 
         async function startApp() {
             document.getElementById('landing').style.display = 'none';
             canvas.style.display = 'block';
             document.getElementById('ui').style.display = 'flex';
-            document.getElementById('app-watermark').style.display = 'block';
             await initModels();
         }
 
         async function initModels() {
             await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
             await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
-            
             selfieSegmentation = new SelfieSegmentation({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`});
             selfieSegmentation.setOptions({ modelSelection: 1 });
             selfieSegmentation.onResults(onResults);
-
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
             video.srcObject = stream;
             video.onloadedmetadata = () => {
@@ -278,22 +130,15 @@
             }
 
             if (showGuide && (isManual || currentMode !== 'none')) {
-                ctx.beginPath();
-                ctx.strokeStyle = 'rgba(78, 186, 186, 0.5)';
-                ctx.lineWidth = 1.5;
-                ctx.moveTo(smoothNoseX, 0);
-                ctx.lineTo(smoothNoseX, canvas.height);
-                ctx.stroke();
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(78, 186, 186, 0.4)'; ctx.lineWidth = 1.2;
+                ctx.moveTo(smoothNoseX, 0); ctx.lineTo(smoothNoseX, canvas.height); ctx.stroke();
             }
         }
 
         function drawSymmetry(sourceX, width) {
             ctx.drawImage(tempCanvas, sourceX, 0, width, canvas.height, sourceX, 0, width, canvas.height);
-            ctx.save();
-            ctx.translate(smoothNoseX * 2, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(tempCanvas, sourceX, 0, width, canvas.height, sourceX, 0, width, canvas.height);
-            ctx.restore();
+            ctx.save(); ctx.translate(smoothNoseX * 2, 0); ctx.scale(-1, 1);
+            ctx.drawImage(tempCanvas, sourceX, 0, width, canvas.height, sourceX, 0, width, canvas.height); ctx.restore();
         }
 
         function setMode(m) {
@@ -304,7 +149,7 @@
 
         function takeSnapshot() {
             const l = document.createElement('a');
-            l.download = 'SymmetryFace.png';
+            l.download = 'Derech-HaEmtza.png';
             l.href = canvas.toDataURL('image/png');
             l.click();
         }
@@ -320,7 +165,7 @@
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = 'SymmetryFace.webm';
+                    a.download = 'Derech-HaEmtza.webm';
                     a.click();
                 };
                 mediaRecorder.start();
