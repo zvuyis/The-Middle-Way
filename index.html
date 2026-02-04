@@ -9,19 +9,35 @@
     <style>
         :root { --accent: #4ebaba; --bg-glass: rgba(255, 255, 255, 0.1); --text-main: #e0e0e0; }
         body { margin: 0; background: #0a0c10; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; color: var(--text-main); }
+        
+        /* שכבות בסיסיות */
+        .screen { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 200; transition: opacity 0.5s; }
         canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
         video { display: none; }
-        #landing { position: relative; z-index: 200; text-align: center; padding: 30px; max-width: 400px; background: rgba(15, 20, 25, 0.8); border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        #app-logo { width: 160px; height: 160px; margin-bottom: 25px; border-radius: 50%; border: 1px solid var(--accent); background: #fff; object-fit: contain; padding: 8px; }
-        h1 { font-size: 42px; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
-        p { font-size: 18px; margin-bottom: 35px; opacity: 0.8; font-weight: 300; }
-        #startBtn { padding: 16px 45px; border-radius: 30px; background: var(--accent); color: #000; font-size: 18px; font-weight: 600; border: none; cursor: pointer; }
+
+        /* קופסאות תוכן */
+        .content-card { text-align: center; padding: 30px; max-width: 350px; background: rgba(15, 20, 25, 0.85); border-radius: 30px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        
+        #app-logo { width: 140px; height: 140px; margin-bottom: 20px; border-radius: 50%; border: 1px solid var(--accent); background: #fff; object-fit: contain; padding: 8px; }
+        h1 { font-size: 38px; margin: 0 0 10px 0; color: #fff; }
+        h2 { font-size: 24px; color: var(--accent); margin-top: 0; }
+        p { font-size: 18px; margin-bottom: 30px; opacity: 0.9; font-weight: 300; }
+
+        /* רשימת הוראות */
+        .instructions-list { text-align: right; margin: 25px 0; padding: 0; list-style: none; }
+        .instructions-list li { margin-bottom: 15px; font-size: 16px; display: flex; align-items: flex-start; gap: 10px; }
+        .instructions-list li::before { content: "•"; color: var(--accent); font-weight: bold; font-size: 20px; }
+
+        .main-btn { padding: 16px 40px; border-radius: 30px; background: var(--accent); color: #000; font-size: 18px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(78, 186, 186, 0.3); }
+
+        /* ממשק המצלמה (מסך 3) */
         #ui { position: absolute; bottom: 30px; width: 100%; display: none; flex-direction: column; align-items: center; gap: 15px; z-index: 100; }
         .controls-row { display: flex; gap: 10px; justify-content: center; align-items: center; }
         button.tool-btn { padding: 12px 16px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); background: var(--bg-glass); color: #fff; backdrop-filter: blur(5px); cursor: pointer; }
         button.active { background: var(--accent); color: #000; border-color: var(--accent); }
         #slider-container { width: 80%; max-width: 350px; background: var(--bg-glass); padding: 12px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
         input[type=range] { width: 100%; accent-color: var(--accent); }
+
         .watermark { position: absolute; bottom: 8px; font-size: 10px; color: rgba(255,255,255,0.25); z-index: 210; width: 100%; text-align: center; pointer-events: none; }
         #recBtn.recording { border-color: #ff5e5e; color: #ff5e5e; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -29,11 +45,25 @@
 </head>
 <body>
 
-    <div id="landing">
-        <img src="logo.png" id="app-logo" alt="Logo">
-        <h1>דרך האמצע</h1>
-        <p>החזר לעצמך את הסימטריה</p>
-        <button id="startBtn" onclick="startApp()">התחלת חוויה</button>
+    <div id="screen-1" class="screen">
+        <div class="content-card">
+            <img src="logo.png" id="app-logo" alt="Logo">
+            <h1>דרך האמצע</h1>
+            <p>החזר לעצמך את הסימטריה</p>
+            <button class="main-btn" onclick="goToInstructions()">להוראות השימוש</button>
+        </div>
+    </div>
+
+    <div id="screen-2" class="screen" style="display:none; opacity:0;">
+        <div class="content-card">
+            <h2>הוראות שימוש</h2>
+            <ul class="instructions-list">
+                <li>סעיף 1: TBD</li>
+                <li>סעיף 2: TBD</li>
+                <li>סעיף 3: TBD</li>
+            </ul>
+            <button class="main-btn" onclick="startCamera()">הבנתי, בואו נתחיל</button>
+        </div>
     </div>
 
     <video id="videoElement" playsinline autoplay muted></video>
@@ -71,16 +101,30 @@
         let currentMode = 'none', smoothNoseX = 0, selfieSegmentation;
         let isManual = false, showGuide = true, isRecording = false, mediaRecorder, recordedChunks = [];
 
+        // ניווט בין מסכים
+        function goToInstructions() {
+            document.getElementById('screen-1').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('screen-1').style.display = 'none';
+                document.getElementById('screen-2').style.display = 'flex';
+                setTimeout(() => document.getElementById('screen-2').style.opacity = '1', 50);
+            }, 500);
+        }
+
+        async function startCamera() {
+            document.getElementById('screen-2').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('screen-2').style.display = 'none';
+                canvas.style.display = 'block';
+                document.getElementById('ui').style.display = 'flex';
+            }, 500);
+            await initModels();
+        }
+
+        // לוגיקה טכנית (ללא שינוי)
         function manualAdjust(val) { isManual = true; smoothNoseX = (val / 100) * canvas.width; }
         function resetAuto() { isManual = false; }
         function toggleGuide() { showGuide = !showGuide; document.getElementById('btnGuide').classList.toggle('active', !showGuide); }
-
-        async function startApp() {
-            document.getElementById('landing').style.display = 'none';
-            canvas.style.display = 'block';
-            document.getElementById('ui').style.display = 'flex';
-            await initModels();
-        }
 
         async function initModels() {
             await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
